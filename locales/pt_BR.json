@@ -1,4 +1,7 @@
 {
+    "buttonHola": {
+        "saluda": "Ola {user} xd "
+    },
     "notFound": "O idioma que você inseriu não está disponível.",
     "notUserAmin": "Você precisa de permissões de administrador para fazer isso.",
     "notBotAdmin": "Eu não tenho permissões de administrador neste servidor.",
