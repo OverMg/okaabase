@@ -1,0 +1,16 @@
+{
+	"buttonHola": {
+		"saluda": "Hello {user} xd"
+	},
+	"ping": {
+		"pingAndMention": "Hello, my ping is ** {ping} ms**. You also mentioned: {mentioned}.",
+		"onlyPing": "Hello, my ping is ** {ping} ms**.",
+		"noPing": "Hello, I don't see my ping xd"
+	},
+	"languages": {
+		"noArgs": "Por favor, insira o código do novo idioma.\nExemplo: `{prefix}setlang pt`\nIdiomas aceitos: `es` (Espanhol), `en` (Inglês), `pt` (Português)",
+		"newLang": "Você atualizou com sucesso o meu idioma para este servidor.",
+		"error": "Ocorreu um erro ao tentar atualizar o meu idioma neste servidor, se o erro persistir, por favor, informe no meu servidor de suporte.",
+		"noValid": "That language code is not available"
+	}
+}

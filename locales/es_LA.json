@@ -1,0 +1,22 @@
+{
+	"buttonHola": {
+		"saluda": "Hola {user} xd "
+	},
+	"ping": {
+		"pingAndMention": "Holis, mi ping es **{ping} ms**. También mencionaste a: {mentioned}.",
+		"onlyPing": "Holis, mi ping es ** {ping} ms**.",
+		"noPing": "Holis, no veo mi ping xd"
+	},
+	"languages": {
+		"noArgs": "Por favor ingresa el codigo del nuevo lenguaje.\nEjemplo:`{prefix}setlang es`\nLenguajes aceptados `es` (Español), `en` (English), `pt` (Português)",
+		"newLang": "Actualizaste mi idioma para este servidor correctamente.",
+		"error": "Ocurrio un error al intentar anctualizar mi lenguaje en este serviro, si el error persiste por favor comunicalo en mi servidor de soporte",
+		"noValid": "Ese código de lenguaje no esta disponible"
+	},
+    "prefix": {
+        "noPerms": "Necesitas permisos de administrador para cambiar mi prefijo en este servidor.",
+        "noArgs": ":x: | Debes introducir el nuevo prefix!",
+        "noValid": ":x: | La longitud el prefix debe ser de minimo 1 caracter y maximo 3!",
+        "success": "<a:check:1098763361807769672> | Mi nuevo prefix es `{newPrefix}`"
+    }
+}
