@@ -16,7 +16,7 @@ async function loadPrefixCommands(client) {
 		}
 	});
 
-	table.addRow(`PrefixCommands `, client.prefixCommands.size, "🟩");
+	table.addRow(`PrefixCommands`, client.prefixCommands.size, "🟩");
 	return console.log(table.toString(), "\nComandos de Prefix cargados.");
 }
 

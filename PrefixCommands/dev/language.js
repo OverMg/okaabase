@@ -12,7 +12,7 @@ module.exports = {
      * @param {Message} message 
      */
 
-    async execute(message, args, client, prefix, lang){
+    async execute(message, args, client, prefix, lang) {
         
         try {
             const lagsMap = {

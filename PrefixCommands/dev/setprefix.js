@@ -8,13 +8,14 @@ module.exports = {
 	usage: `setprefix <nuevo prefix>`,
 	category: "admin",
 
-	async execute(message, args, client, lang) {
+	async execute(message, args, client, prefix, lang) {
 
 		if (!message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
 			return message.reply({ embeds: [ new EmbedBuilder().setColor('Red').setDescription(client.languages.__({ phrase: 'prefix.noPerms', locale: lang })) ] }).then((msg) => { setTimeout(() => msg.delete(), 8000); });
 		}
 
 		const newPrefix = args[0];
+		console.log(newPrefix)
 
 		if (!newPrefix) {
 			const embedNoArg = new EmbedBuilder()
@@ -42,7 +43,7 @@ module.exports = {
 			}
 
 			const embed = new EmbedBuilder()
-                .setDescription(client.languages.__mf({ phrase: 'prefix.noValid', locale: lang }, { newPrefix: newPrefix }))
+                .setDescription(client.languages.__mf({ phrase: 'prefix.success', locale: lang }, { newPrefix: newPrefix }))
                 .setColor("#2f3136")
 
 			await message.reply({ embeds: [embed] });

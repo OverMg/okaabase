@@ -1,7 +1,7 @@
 async function loadEvents(client) {
 	const { loadFiles } = require("../Functions/fileLoader");
 	const ascii = require("ascii-table");
-	const table = new ascii().setHeading("Event", "Status");
+	const table = new ascii().setHeading("Events", "Count", "Status");
 
 	await client.events.clear();
 
@@ -22,8 +22,7 @@ async function loadEvents(client) {
 		}
 	});
 
-	table.addRow(client.events.size, "🟩");
-
+	table.addRow(`Modals`, client.events.size, "🟩");
 	return console.log(table.toString(), "\nEventos Cargados");
 }
 

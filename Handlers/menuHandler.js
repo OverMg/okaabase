@@ -1,4 +1,6 @@
 async function loadMenus(client) {
+	const ascii = require("ascii-table");
+  	const table = new ascii().setHeading("Menus", "Count", "Status");
 	const { loadFiles } = require("../Functions/fileLoader");
 
 	await client.menus.clear();
@@ -10,7 +12,8 @@ async function loadMenus(client) {
 		client.menus.set(menu.data.name, menu);
 	});
 
-	return console.log("\nSelect Menus Cargados.");
+	table.addRow(`Modals `, client.menus.size, "🟩");
+	return console.log(table.toString(), "\nMenus cargados.");
 }
 
 module.exports = { loadMenus };

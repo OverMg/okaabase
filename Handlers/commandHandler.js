@@ -25,7 +25,7 @@ async function loadCommands(client) {
 
   table.addRow(`CommandsSlash `, client.commands.size, "🟩");
 
-  return console.log(table.toString(), "\nComandos de barra cargados.");
+  return console.log(table.toString(), "\nComandos Slash cargados.");
 }
 
 module.exports = { loadCommands };
