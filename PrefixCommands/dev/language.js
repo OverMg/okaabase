@@ -38,7 +38,7 @@ module.exports = {
                 
                 const dataGuild = await guildSchema.findOne({ GuildId: message.guild.id });
     
-                if(!dataGuild) {
+                if (!dataGuild) {
                     new guildSchema({
                         GuildId: message.guild.id,
                         GuildLanguage: newLang

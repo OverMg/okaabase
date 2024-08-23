@@ -18,7 +18,7 @@ module.exports = {
 			prefix = guildData.GuildPrefix;
 		};
 
-		const devsIDS = ['245339452464037888', '1031349215751839765']
+		const devsIDS = ['245339452464037888', '1031349215751839765', '639285348677189664']
 
 		if (!message.content?.toLowerCase().startsWith(prefix.toLowerCase())) return;
 

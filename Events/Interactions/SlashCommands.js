@@ -20,7 +20,7 @@ module.exports = {
 			newGuild.save().catch(err => { console.log(err) });
 		};
 		const lang = interaction.guild.lang;
-		const devsIDS = ['245339452464037888', '1031349215751839765']
+		const devsIDS = ['245339452464037888', '1031349215751839765', '639285348677189664']
 
 		if (interaction.isChatInputCommand()) {
 			const command = client.commands.get(interaction.commandName);
@@ -51,7 +51,7 @@ module.exports = {
 				});
 			}
 
-			if (command.developer && !devsIDS.includes(message.author.id))
+			if (command.developer && !devsIDS.includes(interaction.user.id))
 				return interaction.reply({
 					content: "Este comando solo puede ser utilizado por el propietario del bot, escribe **!help** o </help:1109583268216582242> para ver mi lista completa de comandos.",
 					ephermal: true,

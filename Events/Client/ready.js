@@ -14,9 +14,9 @@ module.exports = {
   async execute(client) {
 
     mongoose.set("strictQuery", false);
+    mongoose.set("allowDiskUse", true)
 
     mongoose.connect(process.env.mongoURL, {
-      // keepAlive: true,
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
@@ -25,17 +25,12 @@ module.exports = {
       console.log("Conectado a la base de datos");
     }
 
-    client.user.setPresence({
-      activities: [
-        {
-          type: ActivityType.Custom,
-          name:  `🌸 | ayuda`,
-          state: `🌸 !help • okaa.lat`,
-          url: `https://okaa.lat/`,
-        },
-      ],
-      status: "idle",
+    client.user.setActivity({
+      name: `okaa`,
+      type: ActivityType.Streaming,
+      url: `https://www.twitch.tv/discord`,
     });
+    
     loadCommands(client);
     loadPrefixCommands(client)
  },
