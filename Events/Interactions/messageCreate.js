@@ -1,5 +1,5 @@
 const { Client, ChatInputCommandInteraction, EmbedBuilder } = require("discord.js");
-const guildSchema = require('../../Schemas/configGuilds');
+const guildDataClass = require('../../utils/configGuils');
 
 module.exports = {
 	name: "messageCreate",
@@ -11,14 +11,9 @@ module.exports = {
 
 	async execute(message, client) {
 		if (message.author.bot || message.channel.isDMBased()) return;
-		const guildData = await guildSchema.findOne({ GuildId: message.guild.id });
+		const guildData = await guildDataClass.load(message.guildId);
 		
-		let prefix = '.';
-		if (typeof guildData?.GuildPrefix === 'string') {
-			prefix = guildData.GuildPrefix;
-		};
-
-		const devsIDS = ['245339452464037888', '1031349215751839765', '639285348677189664']
+		const prefix = guildData?.GuildPrefix || '.';
 
 		if (!message.content?.toLowerCase().startsWith(prefix.toLowerCase())) return;
 
@@ -33,37 +28,39 @@ module.exports = {
 			if (guildData) {
 				server.lang = guildData.GuildLanguage;
 			} else {
-				const newGuild = new guildSchema({
-					GuildId: server.id.toString(),
-					GuildLanguage: 'es_LA'
-				});
-				newGuild.save().catch(err => { console.log(err) });
+				server.lang = 'es_LA';
 			};
 
-			if (cmdprefix.developer && !devsIDS.includes(message.author.id)) {
-				return message.reply({
-					content: `Este comando es exlusivo para mis desarrolladores.`,
-					allowedMentions: { repliedUser: false },
-				});
+			if (cmdprefix.developer && !client.config.devs.includes(message.author.id)) {
+				return message.reply({ content: `Este comando es exlusivo para mis desarrolladores.` });
 			};
 
 			const lang = message.guild.lang;
 			try {
 				cmdprefix.execute(message, args, client, prefix.toLowerCase(), lang);
 			} catch (error) {
-				console.log(error)
+				const errorsChannel = await client.channels.fetch(client.config.logs.errorsChannelID).catch((e) => void 0);
+				if (!errorsChannel) {
+					return console.error(error);
+				};
+				const embed = new EmbedBuilder()
+					.setAuthor({ name: message.author.username, iconURL: message.author.displayAvatarURL() })
+					.setFooter({ text: `${message.guild.name} || ${message.guild.id}`, iconURL: message.guild.iconURL() })
+					.setColor('Default')
+					.setDescription(`[ ERROR ] ${prefix}${command} ${args?.join(" ")}\n\`\`\`js\n${error.stack}\`\`\``)
+				
+				errorsChannel.send({ embeds: [embed] });
 			}
-			const ch = await client.channels.fetch("1155316602032623637").catch((e) => {
-				return;
-			});
+
+			const ch = await client.channels.fetch(client.config.logs.prefixChannelID).catch((e) => void 0);
             
 			if (ch) {
 				const embed = new EmbedBuilder()
-					.setTitle(`> Servidor: **${message.guild.name}**`)
-					.setDescription(`> Cmd:\n${prefix}${command} ${args?.join(" ")}`)
+					.setAuthor({ name: message.author.globalName, iconURL: message.author.displayAvatarURL() })
+					.setDescription(`${prefix}${command} ${args?.join(" ")}`)
 					.setTimestamp()
 					.setFooter({
-						text: `User: ${message.author.username} / ${message.author.id}`,
+						text: message.guild.name,
 						iconURL: message.guild.iconURL(),
 					});
 				ch.send({ embeds: [embed] });

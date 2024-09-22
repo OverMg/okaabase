@@ -1,6 +1,7 @@
 const { Client, GatewayIntentBits, Collection, Partials, Options } = require('discord.js');
 require("./Functions/anticrash.js")();
 require("dotenv").config();
+require('colors');
 const { join } = require('path');
 const process = require("node:process");
 
@@ -29,7 +30,7 @@ const client = new Client({
 		GatewayIntentBits.GuildWebhooks,
 		GatewayIntentBits.Guilds,
 		GatewayIntentBits.MessageContent,
-		GatewayIntentBits.GuildPresences,
+		// GatewayIntentBits.GuildPresences,
 	],
 	partials: [
         Partials.User,
@@ -65,6 +66,8 @@ client.prefixCommands = new Collection();
 client.buttons = new Collection();
 client.modals = new Collection();
 client.menus = new Collection();
+
+client.config = require('./configs');
 
 client.languages = require('i18n');
 client.languages.configure({

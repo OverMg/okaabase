@@ -1,0 +1,3 @@
+{
+    "ignore": ["Events", "PrefixCommands", "Commands", "Menus", "Modals", "Buttons"]
+}

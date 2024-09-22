@@ -1,5 +1,5 @@
 const { EmbedBuilder, PermissionsBitField } = require("discord.js");
-const guildSchema = require('../../Schemas/configGuilds');
+const guildDataClass = require('../../utils/configGuils');
 
 module.exports = {
 	name: "setprefix",
@@ -15,7 +15,6 @@ module.exports = {
 		}
 
 		const newPrefix = args[0];
-		console.log(newPrefix)
 
 		if (!newPrefix) {
 			const embedNoArg = new EmbedBuilder()
@@ -32,25 +31,13 @@ module.exports = {
 			return message.channel.send({ embeds: [embedMaxArg] }).then((msg) => { setTimeout(() => msg.delete(), 8000) });
 		}
 
-		try {
-			const data = await guildSchema.findOne({ GuildId: message.guild.id });
+		await guildDataClass.updatePrefix(message.guildId, newPrefix);
 
-			if (data) {
-				(data.GuildPrefix = newPrefix),
-				data.save();
-			} else {
-				new guildSchema({ GuildId: message.guild.id, GuildPrefix: newPrefix }).save();
-			}
+		const embed = new EmbedBuilder()
+            .setDescription(client.languages.__mf({ phrase: 'prefix.success', locale: lang }, { newPrefix: newPrefix }))
+            .setColor("#2f3136")
 
-			const embed = new EmbedBuilder()
-                .setDescription(client.languages.__mf({ phrase: 'prefix.success', locale: lang }, { newPrefix: newPrefix }))
-                .setColor("#2f3136")
-
-			await message.reply({ embeds: [embed] });
-		} catch (err) {
-			console.log(err)
-			message.reply({ content: `Ocurrio un error al intentar actualizar el prefix\n` + err });
-		}
+		await message.reply({ embeds: [embed] });
 	},
 };
 

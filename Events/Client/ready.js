@@ -22,16 +22,18 @@ module.exports = {
     });
 
     if (mongoose.connect) {
-      console.log("Conectado a la base de datos");
+      console.log("Conectado a la base de datos".green);
     }
 
     client.user.setActivity({
-      name: `okaa`,
+      name: `Sexcall???`,
       type: ActivityType.Streaming,
       url: `https://www.twitch.tv/discord`,
     });
     
     loadCommands(client);
     loadPrefixCommands(client)
+
+    console.log(`Bot ${client.user.tag}!`.green);
  },
 };

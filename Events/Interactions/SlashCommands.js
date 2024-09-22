@@ -1,5 +1,5 @@
 const { ChatInputCommandInteraction, EmbedBuilder, ButtonBuilder, ActionRowBuilder, Collection } = require("discord.js");
-const guildSchema = require('../../Schemas/configGuilds');
+const guildDataClass = require('../../utils/configGuils');
 
 module.exports = {
 	name: "interactionCreate",
@@ -8,19 +8,15 @@ module.exports = {
 	 */
 	async execute(interaction, client) {
 		if (interaction.channel.isDMBased()) return;
-		const guildData = await guildSchema.findOne({ GuildId: interaction.guild.id });
+		const guildData = await guildDataClass.load(interaction.guildId);
+
 		const server = interaction.guild;
 		if (guildData) {
-			server.lang = guildData.GuildLanguage;
+			server.lang = guildData?.GuildLanguage;
 		} else {
-			const newGuild = new guildSchema({
-				GuildId: server.id.toString(),
-				GuildLanguage: 'es_LA'
-			});
-			newGuild.save().catch(err => { console.log(err) });
+			server.lang = 'es_LA';
 		};
-		const lang = interaction.guild.lang;
-		const devsIDS = ['245339452464037888', '1031349215751839765', '639285348677189664']
+		const lang = interaction.guild.lang || 'es_LA';
 
 		if (interaction.isChatInputCommand()) {
 			const command = client.commands.get(interaction.commandName);
@@ -51,7 +47,7 @@ module.exports = {
 				});
 			}
 
-			if (command.developer && !devsIDS.includes(interaction.user.id))
+			if (command.developer && !client.config.devs.includes(interaction.user.id))
 				return interaction.reply({
 					content: "Este comando solo puede ser utilizado por el propietario del bot, escribe **!help** o </help:1109583268216582242> para ver mi lista completa de comandos.",
 					ephermal: true,
@@ -66,9 +62,19 @@ module.exports = {
 				}
 			} catch (error) {
 				await interaction.reply({
-					content: "Se ha producido un error al ejecutar este comando. He enviado su informe de fallos al servidor de soporte. Si esto persiste, póngase en contacto con el desarrollador haciendo una solicitud de soporte.",
-					ephemeral: true,
-				});
+					content: `Se produjo un error, ya envie un informe de errores a mi desarrollador\nSi el error presiste por favor ingresa a mi servidor de soporte.`,
+				})
+				const errorsChannel = await client.channels.fetch(client.config.logs.errorsChannelID).catch((e) => void 0);
+				if (!errorsChannel) {
+					return console.error(error);
+				};
+				const embed = new EmbedBuilder()
+					.setAuthor({ name: interaction.user.username, iconURL: interaction.user.displayAvatarURL() })
+					.setFooter({ text: `${interaction.guild.name} || ${interaction.guild.id}`, iconURL: interaction.guild.iconURL() })
+					.setColor('Default')
+					.setDescription(`**[ERROR]** Comando: **/${command.data.name}**\n\`\`\`js\n${error.stack}\`\`\``)
+				
+				await errorsChannel.send({ embeds: [embed] }).catch((e) => void 0);
 			}
 		} else if (interaction.isButton()) {
 			const buttonId = interaction.customId.split("_");
