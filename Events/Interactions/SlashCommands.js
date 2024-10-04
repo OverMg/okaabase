@@ -114,7 +114,7 @@ module.exports = {
 			} else return;
 		} else if (context === 1 || context === 2) {
             const command = client.commands.get(interaction.commandName);
-            const errChannel = await client.channels.fetch(client.config.support.channelErrrosContext).catch((e) => null);
+            const errChannel = await client.channels.fetch(client.config.channeldErrors.context).catch((e) => null);
 
             if (!command) {
                 return interaction.reply({ content: "Comando fuera de línea.", ephemeral: true });
