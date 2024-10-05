@@ -10,16 +10,10 @@ module.exports = {
 		if (interaction.user.bot) return;
 		const context = interaction.context;
 
-        if (context === 0 || typeof context != 'number') {
+        if (context === 0 || typeof context != 'number' || interaction.guild !== null) {
+			
 			const guildData = await guildDataClass.load(interaction.guildId);
-	
-			const server = interaction.guild;
-			if (guildData) {
-				server.lang = guildData?.GuildLanguage;
-			} else {
-				server.lang = 'es_LA';
-			};
-			const lang = interaction.guild.lang || 'es_LA';
+			const lang = guildData?.GuildLanguage || interaction.guild?.lang || 'es_LA';
 	
 			if (interaction.isChatInputCommand()) {
 				const command = client.commands.get(interaction.commandName);
