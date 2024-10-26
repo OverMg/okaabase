@@ -20,7 +20,7 @@ class ConfigGuils {
     }
 
     async updatePrefix(guildId, prefix) {
-        const guild = await this.load(guildId);
+        let guild = await this.load(guildId);
         if (guild) {
             guild.GuildPrefix = prefix;
             await guild.save();
