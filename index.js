@@ -1,104 +1,74 @@
-const { Client, GatewayIntentBits, Collection, Partials, Options } = require('discord.js');
-require("./Functions/anticrash.js")();
+const { ClusterManager, ReClusterManager, HeartbeatManager, fetchRecommendedShards } = require("discord-hybrid-sharding");
+const shardsPerClusters = 16;
 require("dotenv").config();
-require('colors');
-const { join } = require('path');
-const process = require("node:process");
 
-const { loadMenus } = require("./Handlers/menuHandler");
-const { loadModals } = require("./Handlers/modalHandler");
-const { loadEvents } = require("./Handlers/eventHandler");
-const { loadButtons } = require("./Handlers/buttonHandler");
-
-const client = new Client({
-	intents: [
-		GatewayIntentBits.GuildMembers,
-		GatewayIntentBits.AutoModerationConfiguration,
-		GatewayIntentBits.AutoModerationExecution,
-		GatewayIntentBits.DirectMessageReactions,
-		GatewayIntentBits.DirectMessageTyping,
-		GatewayIntentBits.DirectMessages,
-		GatewayIntentBits.GuildEmojisAndStickers,
-		GatewayIntentBits.GuildIntegrations,
-		GatewayIntentBits.GuildInvites,
-		GatewayIntentBits.GuildMessageReactions,
-		GatewayIntentBits.GuildMessageTyping,
-		GatewayIntentBits.GuildMessages,
-		GatewayIntentBits.GuildModeration,
-		GatewayIntentBits.GuildScheduledEvents,
-		GatewayIntentBits.GuildVoiceStates,
-		GatewayIntentBits.GuildWebhooks,
-		GatewayIntentBits.Guilds,
-		GatewayIntentBits.MessageContent,
-		// GatewayIntentBits.GuildPresences,
-	],
-	partials: [
-        Partials.User,
-        Partials.Message,
-        Partials.GuildMember,
-        Partials.ThreadMember,
-        Partials.Reaction,
-        Partials.GuildScheduledEvent,
-        Partials.Channel
-    ],
-	sweepers: {
-		...Options.DefaultSweeperSettings,
-		messages: {
-			interval: 3_600,
-			lifetime: 1_800,
-		},
-		users: {
-			interval: 3_600,
-			filter: () => user => user.bot && user.id !== user.client.user.id
-		}
-	},
-	allowedMentions: {
-        parse: ["users", "roles", "everyone"],
-        repliedUser: false
+const config = {
+    totalShards: "auto",
+    shardsPerClusters: shardsPerClusters,
+    totalClusters: "auto",
+    mode: "process",
+    token: process.env.token,
+    restarts: {
+      max: 5,
+      interval: 60 * 60000,
     },
-	cooldowns: 5
+    heartbeat: {
+      interval: 2000,
+      maxMissedHeartbeats: 5,
+    }
+};
+
+const manager = new ClusterManager("./bot.js", config);
+manager.extend(new HeartbeatManager(config.heartbeat));
+manager.extend(new ReClusterManager());
+
+manager.on("debug", (message) => console.log(`[Cluster]`.blue, message));
+
+manager.on('clusterCreate', cluster => {
+    cluster.on('message', message => {
+        console.log(message);
+        if (message._type !== messageType.CUSTOM_REQUEST) return;
+        console.log(`[Cluster]`.blue, `Received message from client: ${message.content}`);
+    });
+    setInterval(() => {
+        cluster.send({ content: 'I am alive' });
+        cluster.request({ content: 'Are you alive?', alive: true })
+            .then(e => console.log(e))
+            .catch(err => console.error(`[Cluster]`.blue, `Error in cluster request: ${err}`));
+    }, 5000);
 });
 
-client.events = new Collection();
-client.commands = new Collection();
-client.cooldowns = new Collection();
-client.prefixCommands = new Collection();
-client.buttons = new Collection();
-client.modals = new Collection();
-client.menus = new Collection();
+async function spawnClusters() {
+    try {
+        await manager.spawn(undefined, undefined, -1);
+        setInterval(async () => {
+            await manager.broadcastEval(`this.ws.status && this.isReady() ? this.ws.reconnect() : 0`)
+                .catch(err => console.error(`[Cluster]`.blue, `Error in broadcastEval: ${err}`));
+        }, 60000);
+    } catch (error) {
+        console.error(`[Cluster]`.blue, `Error in spawnClusters: ${error}`);
+    }
 
-client.config = require('./configs');
+    setInterval(reclusterShards, 3 * 60 * 60 * 1000);
+}
 
-client.languages = require('i18n');
-client.languages.configure({
-	locales: ['es_LA', 'en_US', 'pt_BR'],
-	directory: join(__dirname, "locales"),
-	defaultLocale: 'es_LA',
-	retryInDefaultLocale: true,
-	objectNotation: true,
-	register: global,
+async function reclusterShards() {
+    try {
+        const recommendedShards = await fetchRecommendedShards(config.token);
 
-	logWarnDn: function (msg) {
-		console.log('[WARN] ' + msg);
-	},
+        if (recommendedShards !== manager.totalShards) {
+            const reclusterConfig = {
+                restartMode: "gracefulSwitch",
+                totalShards: recommendedShards,
+                shardsPerClusters: shardsPerClusters,
+                shardList: null,
+                shardClusterList: null,
+            };
+            manager.recluster.start(reclusterConfig);
+        }
+    } catch (error) {
+        console.error(`[Cluster]`.blue, `Error in reclusterShards: ${error}`);
+    }
+}
 
-	logErrorFn: function (msg) {
-		console.log('[ERROR] ' + msg);
-	},
-
-	missingKeyFn: function (value) {
-		return value;
-	},
-
-	mustacheConfig: {
-		tags: ['{{', '}}'],
-		disable: false
-	}
-});
-
-loadEvents(client);
-loadButtons(client);
-loadModals(client);
-loadMenus(client);
-
-client.login(process.env.token);
+spawnClusters();

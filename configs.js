@@ -4,16 +4,17 @@ module.exports = {
         sucess: '#FF6BB1',
         error: 'Red'
     },
-    ownerID: "245339452464037888",
+    ownerID: "", // Your ID
     channeldErrors: {
-        context: "1287505300768690227",
-        slash: "1287492491708334193",
-        prefix: "1287499469939802143"
+        context: "", // LOG ERROR IN COMMANDS CONTEXT
+        slash: "", // LOG ERROR IN COMMANDS SLASH
+        prefix: "" // LOG ERROR IN COMMANDS PREFIXES
     },
-    devs: ["245339452464037888"],
+    devs: [""], // Add your devs IDs
     logs: {
-        errorsChannelID: "1287505300768690227",
-        slashChannelID: "1287492491708334193",
-        prefixChannelID: "1287499469939802143"
+        errorsChannelID: "CHANNEL ID TO REGISTRY ERRORS",
+        slashChannelID: "CHANNEL ID TO REGISTRY SLASH USES",
+        prefixChannelID: "CHANNEL ID TO REGISTRY PREFIXES USES",
+        shardLogsURL: "WEBHOOK URL",
     }
 }
