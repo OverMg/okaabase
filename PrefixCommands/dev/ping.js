@@ -1,6 +1,7 @@
 const { Message } = require('discord.js');
 
 module.exports = {
+    cooldown: 5,
     name: "ping",
     description: "Muestra mi latencia en ms.",
     usage: `ping`,
