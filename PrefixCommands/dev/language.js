@@ -2,6 +2,7 @@ const { Message, PermissionsBitField } = require('discord.js');
 const guildDataClass = require('../../utils/configGuils');
 
 module.exports = {
+    cooldown: 5,
     name: "setlanguage",
     description: "Muestra mi latencia en ms.",
     alias: ['lang', 'setlang', 'slang'],

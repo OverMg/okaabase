@@ -2,6 +2,7 @@ const { EmbedBuilder, PermissionsBitField } = require("discord.js");
 const guildDataClass = require('../../utils/configGuils');
 
 module.exports = {
+	cooldown: 5,
 	name: "setprefix",
 	description: "Cambia mi prefix en este servidor.",
 	alias: ["spx"],
