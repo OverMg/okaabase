@@ -1,4 +1,4 @@
-const { ActivityType, Client, Events } = require("discord.js");
+const { ActivityType, Client, Events, EmbedBuilder } = require("discord.js");
 const axios = require('axios');
 
 function formatDuration(ms) {
@@ -35,12 +35,29 @@ module.exports = {
     const ping = client.ws.ping;
     const uptime = formatDuration(client.uptime);
 
-    try {
-      await axios.post(webhookUrl, {
-        content: `[${timestamp}] Shard ${shardId}/${totalShards} Reconnecting.\nServers: ${guildCount}.\nPing: ${ping.toFixed(2)}ms.\nUptime: ${uptime}.`,
-      });
-    } catch (error) {
-      console.error(`[Webhook] Error sending to webhook: ${error}`);
-    }
+    const embed = new EmbedBuilder()
+      .setColor('Red')
+      .setTitle('Shard Reconnecting')
+      .setDescription(`Shard ${shardId}/${totalShards} Reconnecting.`)
+      .addFields(
+        {
+          name: 'Servers',
+          value: `${guildCount}.`,
+          inline: true,
+        },
+        {
+          name: 'Ping',
+          value: `${ping.toPrecision(2)}ms.`,
+          inline: true,
+        },
+        {
+          name: 'Uptime',
+          value: `${uptime}.`,
+          inline: true,
+        },
+      )
+      .setTimestamp(timestamp);
+
+    await axios.post(webhookUrl, { embeds: [embed] });
   },
 };
