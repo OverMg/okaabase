@@ -12,7 +12,7 @@ async function loadButtons(client) {
 		client.buttons.set(button.data.name, button);
 	});
 
-	table.addRow(`Buttons `, client.modals.size, "🟩");
+	table.addRow(`Buttons `, client.buttons.size, "🟩");
 	return console.log(table.toString(), "\nButtons cargados.");
 }
 
