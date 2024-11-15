@@ -6,13 +6,13 @@ class ConfigGuils {
     }
 
     async loadAll() {
-        const data = await configGuildsSchema.find().exec();
+        let data = await configGuildsSchema.find().exec();
         data.forEach(guild => this.config.set(guild.GuildId, guild));
     }
 
     async load(guildId) {
         if (!this.config.has(guildId)) {
-            const guild = await configGuildsSchema.findOne({ GuildId: guildId }).exec();
+            let guild = await configGuildsSchema.findOne({ GuildId: guildId }).exec();
             if (!guild) return null;
             this.config.set(guildId, guild);
         }
@@ -46,28 +46,28 @@ class ConfigGuils {
     }
 
     async addDisabledCommand(guildId, command) {
-        const guild = await this.load(guildId);
+        let guild = await this.load(guildId);
         guild.CommandsDisabled.push(command);
         await guild.save();
         await configGuildsSchema.findOneAndUpdate({ GuildId: guildId }, { CommandsDisabled: guild.CommandsDisabled });
     }
 
     async removeDisabledCommand(guildId, command) {
-        const guild = await this.load(guildId);
+        let guild = await this.load(guildId);
         guild.CommandsDisabled = guild.CommandsDisabled.filter(cmd => cmd !== command);
         await guild.save();
         await configGuildsSchema.findOneAndUpdate({ GuildId: guildId }, { CommandsDisabled: guild.CommandsDisabled });
     }
 
     async addDisabledCategory(guildId, category) {
-        const guild = await this.load(guildId);
+        let guild = await this.load(guildId);
         guild.CategoriesDisabled.push(category);
         await guild.save();
         await configGuildsSchema.findOneAndUpdate({ GuildId: guildId }, { CategoriesDisabled: guild.CategoriesDisabled });
     }
 
     async removeDisabledCategory(guildId, category) {
-        const guild = await this.load(guildId);
+        let guild = await this.load(guildId);
         guild.CategoriesDisabled = guild.CategoriesDisabled.filter(cat => cat !== category);
         await guild.save();
         await configGuildsSchema.findOneAndUpdate({ GuildId: guildId }, { CategoriesDisabled: guild.CategoriesDisabled });
