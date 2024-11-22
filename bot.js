@@ -56,7 +56,7 @@ const client = new Client({
         parse: ["users", "roles", "everyone"],
         repliedUser: false
     },
-	cooldowns: 5
+	// cooldowns: 5
 });
 
 client.events = new Collection();
