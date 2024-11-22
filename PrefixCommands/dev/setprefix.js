@@ -1,5 +1,6 @@
 const { EmbedBuilder, PermissionsBitField } = require("discord.js");
 const guildDataClass = require('../../utils/configGuils');
+const { default: mongoose } = require("mongoose");
 
 module.exports = {
 	cooldown: 5,
@@ -13,7 +14,13 @@ module.exports = {
 
 		if (!message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
 			return message.reply({ embeds: [ new EmbedBuilder().setColor('Red').setDescription(client.languages.__({ phrase: 'prefix.noPerms', locale: lang })) ] }).then((msg) => { setTimeout(() => msg.delete(), 8000); });
-		}
+		};
+
+		const mongooseConnectionStatus = mongoose.connection.readyState;
+
+        if (mongooseConnectionStatus !== 1) {
+            return message.reply({ content: client.languages.__mf({ phrase: 'noDb', locale: lang }) });
+        }
 
 		const newPrefix = args[0];
 

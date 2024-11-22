@@ -1,5 +1,6 @@
 const { ChatInputCommandInteraction, EmbedBuilder, ButtonBuilder, ActionRowBuilder, Collection } = require("discord.js");
 const guildDataClass = require('../../utils/configGuils');
+const { default: mongoose } = require("mongoose");
 
 module.exports = {
 	name: "interactionCreate",
@@ -12,7 +13,12 @@ module.exports = {
 
         if (context === 0 || typeof context != 'number' || interaction.guild !== null) {
 			
-			const guildData = await guildDataClass.load(interaction.guildId);
+			let guildData;
+			const mongooseConnectionStatus = mongoose.connection.readyState;
+			if (mongooseConnectionStatus === 1) {
+				guildData = await guildDataClass.load(interaction.guildId);
+			};
+
 			const lang = guildData?.GuildLanguage || interaction.guild?.lang || 'es_LA';
 	
 			if (interaction.isChatInputCommand()) {

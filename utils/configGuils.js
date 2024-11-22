@@ -1,3 +1,4 @@
+const { default: mongoose } = require('mongoose');
 const configGuildsSchema = require('../Schemas/configGuilds');
 
 class ConfigGuils {
@@ -6,13 +7,18 @@ class ConfigGuils {
     }
 
     async loadAll() {
-        let data = await configGuildsSchema.find().exec();
+        let data = await configGuildsSchema.find().exec().catch((e) => void 0);
+        if (!data) return;
         data.forEach(guild => this.config.set(guild.GuildId, guild));
     }
 
     async load(guildId) {
         if (!this.config.has(guildId)) {
-            let guild = await configGuildsSchema.findOne({ GuildId: guildId }).exec();
+            const mongooseConnectionStatus = mongoose.connection.readyState;
+            let guild;
+            if (mongooseConnectionStatus === 1) {
+                guild = await configGuildsSchema.findOne({ GuildId: guildId }).exec();
+            }
             if (!guild) return null;
             this.config.set(guildId, guild);
         }

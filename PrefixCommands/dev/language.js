@@ -1,5 +1,6 @@
 const { Message, PermissionsBitField } = require('discord.js');
 const guildDataClass = require('../../utils/configGuils');
+const { default: mongoose } = require('mongoose');
 
 module.exports = {
     cooldown: 5,
@@ -14,6 +15,13 @@ module.exports = {
      */
 
     async execute(message, args, client, prefix, lang) {
+
+        const mongooseConnectionStatus = mongoose.connection.readyState;
+
+        if (mongooseConnectionStatus !== 1) {
+            return message.reply({ content: client.languages.__mf({ phrase: 'noDb', locale: lang }) });
+        }
+
         const lagsMap = {
             'es': 'es_LA',
             'en': 'en_US',

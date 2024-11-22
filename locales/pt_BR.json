@@ -2,6 +2,7 @@
     "buttonHola": {
         "saluda": "Ola {user} xd "
     },
+    "noDb": "O bot não está conectado à base de dados para fazer isso.",
     "notFound": "O idioma que você inseriu não está disponível.",
     "notUserAmin": "Você precisa de permissões de administrador para fazer isso.",
     "notBotAdmin": "Eu não tenho permissões de administrador neste servidor.",

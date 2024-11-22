@@ -13,16 +13,18 @@ module.exports = {
 
   async execute(client) {
 
-    mongoose.set("strictQuery", false);
-    mongoose.set("allowDiskUse", true)
-
-    mongoose.connect(process.env.mongoURL, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-
-    if (mongoose.connect) {
-      console.log("Conectado a la base de datos".green);
+    if (process.env.mongoURL) {
+      mongoose.set("strictQuery", false);
+      mongoose.set("allowDiskUse", true)
+  
+      mongoose.connect(process.env.mongoURL, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
+  
+      if (mongoose.connect) {
+        console.log("Conectado a la base de datos".green);
+      }
     }
 
     client.user.setActivity({

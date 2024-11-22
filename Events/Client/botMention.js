@@ -1,5 +1,6 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, Message, Client } = require("discord.js");
 const guildSchema = require('../../Schemas/configGuilds');
+const { default: mongoose } = require("mongoose");
 
 module.exports = {
 	name: "messageCreate",
@@ -13,7 +14,13 @@ module.exports = {
 	async execute(message, client) {
 		if (message.author.bot) return;
 		if (!message.inGuild()) return;
-		const guildData = await guildSchema.findOne({ GuildId: message.guild.id });
+
+		const mongooseConnectionStatus = mongoose.connection.readyState;
+		let guildData;
+
+		if (mongooseConnectionStatus === 1) {
+			guildData = await guildSchema.findOne({ GuildId: message.guild.id }).catch((e) => void 0);
+		}
 
 		let prefix = '.';
 		if (typeof guildData?.GuildPrefix == 'string') {

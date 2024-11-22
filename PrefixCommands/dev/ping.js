@@ -11,18 +11,14 @@ module.exports = {
      * @param {Message} message 
      */
 
-    async execute(message, args, client, prefix, lang){
+    async execute(message, args, client, prefix, lang) {
+        
+        const mentionedMember = message.mentions.members.first();
 
-        try {
-            const mentionedMember = message.mentions.members.first();
-
-            if (mentionedMember) {
-                message.channel.send({ content: client.languages.__mf({ phrase: 'ping.pingAndMention', locale: lang }, {mentioned: `${mentionedMember}`, ping: client.ws.ping}) });
-            } else {
-                message.channel.send({ content: client.languages.__mf({ phrase: 'ping.onlyPing', locale: lang }, {ping: client.ws.ping })});
-            }
-        } catch (error) {
-            message.channel.send({ content: client.languages.__({ phrase: 'ping.noPing', locale: lang })});
+        if (mentionedMember) {
+            message.channel.send({ content: client.languages.__mf({ phrase: 'ping.pingAndMention', locale: lang }, {mentioned: `${mentionedMember}`, ping: client.ws.ping}) });
+        } else {
+            message.channel.send({ content: client.languages.__mf({ phrase: 'ping.onlyPing', locale: lang }, {ping: client.ws.ping })});
         }
     }
 }

@@ -1,5 +1,6 @@
 const { Client, EmbedBuilder, Collection, Message } = require("discord.js");
 const guildDataClass = require('../../utils/configGuils');
+const { default: mongoose } = require("mongoose");
 
 module.exports = {
 	name: "messageCreate",
@@ -11,7 +12,13 @@ module.exports = {
 
 	async execute(message, client) {
 		if (message.author.bot || message.channel.isDMBased()) return;
-		const guildData = await guildDataClass.load(message.guildId);
+		let guildData;
+
+		const mongooseConnectionStatus = mongoose.connection.readyState;
+
+		if (mongooseConnectionStatus === 1) {
+			guildData = await guildDataClass.load(message.guildId);
+		};
 		
 		const prefix = guildData?.GuildPrefix || '.';
 
