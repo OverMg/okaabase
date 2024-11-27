@@ -8,4 +8,13 @@ let configGuilds = new Schema({
     CategoriesDisabled: { type: Array }
 });
 
+// configGuilds.pre(['save'], async function (next) {
+//     const guild = this;
+//     if (guild.isModified('GuildLanguage') && !guild._alreadySaved) {
+//         guild._alreadySaved = true;
+//         await guild.save();
+//     }
+//     next();
+// });
+
 module.exports = model('configGuilds', configGuilds);
