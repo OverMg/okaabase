@@ -29,7 +29,7 @@ class ConfigGuils {
         let guild = await this.load(guildId);
         if (guild) {
             guild.GuildPrefix = prefix;
-            await guild.save();
+            await this.cache.set(guildId, guild);
             await configGuildsSchema.findOneAndUpdate({ GuildId: guildId }, { GuildPrefix: prefix });
         } else {
             guild = new configGuildsSchema({ GuildId: guildId, GuildPrefix: prefix });
@@ -42,7 +42,7 @@ class ConfigGuils {
         let guild = await this.load(guildId);
         if (guild) {
             guild.GuildLanguage = language;
-            await guild.save();
+            await this.cache.set(guildId, guild);
             await configGuildsSchema.findOneAndUpdate({ GuildId: guildId }, { GuildLanguage: language });
         } else {
             guild = new configGuildsSchema({ GuildId: guildId, GuildLanguage: language });
@@ -54,28 +54,28 @@ class ConfigGuils {
     async addDisabledCommand(guildId, command) {
         let guild = await this.load(guildId);
         guild.CommandsDisabled.push(command);
-        await guild.save();
+        await this.cache.set(guildId, guild);
         await configGuildsSchema.findOneAndUpdate({ GuildId: guildId }, { CommandsDisabled: guild.CommandsDisabled });
     }
 
     async removeDisabledCommand(guildId, command) {
         let guild = await this.load(guildId);
         guild.CommandsDisabled = guild.CommandsDisabled.filter(cmd => cmd !== command);
-        await guild.save();
+        await this.cache.set(guildId, guild);
         await configGuildsSchema.findOneAndUpdate({ GuildId: guildId }, { CommandsDisabled: guild.CommandsDisabled });
     }
 
     async addDisabledCategory(guildId, category) {
         let guild = await this.load(guildId);
         guild.CategoriesDisabled.push(category);
-        await guild.save();
+        await this.cache.set(guildId, guild);
         await configGuildsSchema.findOneAndUpdate({ GuildId: guildId }, { CategoriesDisabled: guild.CategoriesDisabled });
     }
 
     async removeDisabledCategory(guildId, category) {
         let guild = await this.load(guildId);
         guild.CategoriesDisabled = guild.CategoriesDisabled.filter(cat => cat !== category);
-        await guild.save();
+        await this.cache.set(guildId, guild);
         await configGuildsSchema.findOneAndUpdate({ GuildId: guildId }, { CategoriesDisabled: guild.CategoriesDisabled });
     }
 }
