@@ -22,10 +22,31 @@ module.exports = {
 		
 		const prefix = guildData?.GuildPrefix || '.';
 
-		if (!message.content?.toLowerCase().startsWith(prefix.toLowerCase())) return;
+		const content = message.content.trim();
 
-		const args = message.content.slice(prefix.length).split(/ +/);
-		const command = args.shift().toLowerCase();
+		const mentionPrefix1 = `<@${client.user.id}>`;
+    	const mentionPrefix2 = `<@!${client.user.id}>`;
+    
+		let command;
+		let args;
+
+		if (content.toLowerCase().startsWith(prefix.toLowerCase())) {
+			args = content.slice(prefix.length).trim().split(/ +/);
+			command = args.shift().toLowerCase();
+		} else if (content.toLowerCase().startsWith(`${prefix.toLowerCase()} `)) {
+			args = content.slice(prefix.length + 1).trim().split(/ +/);
+			command = args.shift().toLowerCase();
+		} else if (content.startsWith(mentionPrefix1)) {
+			args = content.slice(mentionPrefix1.length).trim().split(/ +/);
+			command = args.shift().toLowerCase();
+			message.mentions.users.delete(client.user.id);
+		} else if (content.startsWith(mentionPrefix2)) {
+			args = content.slice(mentionPrefix2.length).trim().split(/ +/);
+			command = args.shift().toLowerCase();
+			message.mentions.users.delete(client.user.id);
+		} else {
+			return;
+		}
 
 		let cmdprefix = client.prefixCommands.get(command) || client.prefixCommands.find((c) => c.alias && c.alias.includes(command));
 		if (!cmdprefix) return;
